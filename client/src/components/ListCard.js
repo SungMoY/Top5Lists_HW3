@@ -48,7 +48,7 @@ function ListCard(props) {
     }
 
     function handleUpdateText(event) {
-        setText(event.target.value );
+        setText(event.target.value);
     }
 
     let selectClass = "unselected-list-card";
@@ -94,6 +94,7 @@ function ListCard(props) {
                 id={"list-" + idNamePair._id}
                 className='list-card'
                 type='text'
+                autoFocus={true}
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}

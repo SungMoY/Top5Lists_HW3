@@ -17,7 +17,7 @@ export const GlobalStoreActionType = {
     CLOSE_CURRENT_LIST: "CLOSE_CURRENT_LIST",
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE"
+    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -111,7 +111,13 @@ export const useGlobalStore = () => {
             let response = await api.getTop5ListById(id);
             if (response.data.success) {
                 let top5List = response.data.top5List;
-                top5List.name = newName;
+
+                if (newName !== "") {
+                    top5List.name = newName;
+                } else {
+                    top5List.name = top5List.name;
+                }
+
                 async function updateList(top5List) {
                     response = await api.updateTop5ListById(top5List._id, top5List);
                     if (response.data.success) {
@@ -143,6 +149,31 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
         });
+    }
+
+    // THIS FUNCTION CREATES A NEW LIST
+    store.createNewList = function () {
+        async function asyncCreateNewList() {
+            let emptyList = {
+                "name": "Untitled"+store.newListCounter++,
+                "items": ["?","?","?","?","?"]
+            }
+            console.log("empty list created")
+            const response = await api.createTop5List(emptyList);
+            if (response.data.success) {
+                console.log("empty list successfully sent to api and db", response.data.top5List._id)
+                /*
+                storeReducer({
+                    type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
+                    payload: null
+                })
+                */
+               store.setCurrentList(response.data.top5List._id)
+            } else {
+                console.log("API FAILED TO CREATE NEW LIST")
+            }
+        }
+        asyncCreateNewList();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS

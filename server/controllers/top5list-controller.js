@@ -77,21 +77,40 @@ console.log("updateTop5List: " + JSON.stringify(body));
             })
     })
 }
+
+/*
 deleteTop5List = async (req, res) => {
-    await Top5List.findOneAndDelete({ _id: req.params.id }, (err, top5List) => {
+    await Top5List.findOneAndDelete({ _id: req.params.id }, (err, top5List) => 
+    {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
-
         if (!top5List) {
             return res
                 .status(404)
                 .json({ success: false, error: `Top 5 List not found` })
         }
-
         return res.status(200).json({ success: true, data: top5List })
-    }).catch(err => console.log(err))
+    }
+    ).catch(err => console.log(err))
 }
+*/
+// REVISED deleteTop5List function that uses .then() to handle the callback. This makes the code was for the database deletion before getting/handling the res(ponse) data
+deleteTop5List = async (req, res) => {
+    Top5List.findOneAndDelete({_id: req.params.id}).then((top5List, err) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: "asdf" })
+        }
+        if (!top5List) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Top 5 List not found` })
+        }
+        return res.status(200).json({ success: true, data: top5List })
+    }
+    ).catch(err => console.log(err))
+}
+
 getTop5ListById = async (req, res) => {
     await Top5List.findOne({ _id: req.params.id }, (err, list) => {
         if (err) {
