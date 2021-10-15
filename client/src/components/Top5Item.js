@@ -56,6 +56,7 @@ function Top5Item(props) {
     function toggleEdit() {
         let newActive = !itemEditActive;
         if (newActive) {
+            setText(props.text)
             store.setIsItemEditActive();
         }
         setItemEditActive(newActive);
@@ -70,11 +71,21 @@ function Top5Item(props) {
     let { index } = props;
 
     function handleBlur(event) {
-        console.log("onBlur", store.currentList._id, props.index, ":",text,":")
-        store.changeItem(store.currentList._id, props.index, text)
+        console.log("EDITING FINISHED, PASSING THESE ON", props.index, text, props.text)
+        let oldText = props.text
+        if (text !== oldText) {
+            console.log("NEW TEXT IS UNIQUE SO SHOULD BE UPDATED")
+            if (text === "") {
+                console.log("QUESTION MARK TRANSACTION")
+                store.addUpdateItemTransaction(props.index, "?", oldText);
+            } else {
+                console.log("REGULAR TRANSACTION")
+                store.addUpdateItemTransaction(props.index, text, oldText);
+            }
+        } else {
+            console.log("NEW TEXT IS NOT UNIQUE ")
+        }
         toggleEdit();
-        setText("")
-
     }
 
     function handleUpdateText(event) {
@@ -92,9 +103,11 @@ function Top5Item(props) {
     if (store.isItemEditActive) {
         itemStatus = true;
     }
+    /*
     if (itemEditActive) {
         console.log("edit active for this prop", props)
     }
+    */
     let itemElement = 
         <div
             id={'item-' + (index + 1)}

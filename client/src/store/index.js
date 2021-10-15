@@ -2,6 +2,7 @@ import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
 import MoveItem_Transaction from '../transactions/MoveItem_Transaction'
+import EditItem_Transaction from '../transactions/EditItem_Transaction'
 export const GlobalStoreContext = createContext({});
 /*
     This is our global data store. Note that it uses the Flux design pattern,
@@ -153,57 +154,9 @@ export const useGlobalStore = () => {
         asyncChangeListName(id);
     }
 
-    // THIS FUNCTION CHANGES AN ITEM IN THE CURRENTLY LOADED LIST
-    store.changeItem = function (currentListId, itemIndex, newText) {
-        // GET THE LIST
-        async function asyncChangeItem(currentListId) {
-            let response = await api.getTop5ListById(currentListId);
-            console.log("DID IT GET THE CURRENTLIST", response.data.success)
-            if (response.data.success) {
-                let top5List = response.data.top5List;
-                // handle no name change
-                if (newText !== "") {
-                    top5List.items[itemIndex] = newText
-                }
-                async function updateList(top5List) {
-                    response = await api.updateTop5ListById(currentListId, top5List);
-                    console.log("DID IT UPDATE THE DATABASE", response.data.success)
-                    if (response.data.success) {
-                        store.setCurrentList(currentListId)
-                        /*
-                        storeReducer({
-                            type: GlobalStoreActionType.SET_CURRENT_LIST,
-                            payload: {
-                                currentListId: currentListId
-                            }
-                        });
-
-                        /*
-                        async function getListPairs(top5List) {
-                            response = await api.getTop5ListPairs();
-                            if (response.data.success) {
-                                let pairsArray = response.data.idNamePairs;
-                                storeReducer({
-                                    type: GlobalStoreActionType.SET_CURRENT_LIST,
-                                    payload: {
-                                        idNamePairs: pairsArray,
-                                        top5List: top5List
-                                    }
-                                });
-                            }
-                        }
-                        getListPairs(top5List);
-                        */
-                    }
-                }
-                updateList(top5List);
-            }
-        }
-        asyncChangeItem(currentListId);
-    }
-
     // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
     store.closeCurrentList = function () {
+        tps.clearAllTransactions();
         storeReducer({
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
@@ -258,6 +211,7 @@ export const useGlobalStore = () => {
     // FUNCTIONS ARE setCurrentList, addMoveItemTransaction, addUpdateItemTransaction,
     // moveItem, updateItem, updateCurrentList, undo, and redo
     store.setCurrentList = function (id) {
+        console.log("TPS CURRENTLY", tps)
         async function asyncSetCurrentList(id) {
             let response = await api.getTop5ListById(id);
             if (response.data.success) {
@@ -275,6 +229,33 @@ export const useGlobalStore = () => {
         }
         asyncSetCurrentList(id);
     }
+    store.addUpdateItemTransaction = function (index, newText, oldText) {
+        let transaction = new EditItem_Transaction(store, index, newText, oldText);
+        tps.addTransaction(transaction);
+    }
+
+    store.editItem = function (index, newText) {
+        console.log("index, text", index, newText)
+        async function asyncChangeItem(currentListId) {
+            let response = await api.getTop5ListById(currentListId);
+            console.log("DID IT GET THE CURRENTLIST", response.data.success)
+            if (response.data.success) {
+                let top5List = response.data.top5List;
+                top5List.items[index] = newText
+                async function updateList(top5List) {
+                    response = await api.updateTop5ListById(currentListId, top5List);
+                    console.log("DID IT UPDATE THE DATABASE", response.data.success)
+                    if (response.data.success) {
+                        console.log("AFTER CHANGE, LIST LOOKS LIKE", top5List)
+                        store.setCurrentList(currentListId)
+                    }
+                }
+                updateList(top5List);
+            }
+        }
+        asyncChangeItem(store.currentList._id);
+    }
+
     store.addMoveItemTransaction = function (start, end) {
         let transaction = new MoveItem_Transaction(store, start, end);
         tps.addTransaction(transaction);
