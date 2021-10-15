@@ -1,4 +1,5 @@
-import { React, useContext, useState } from "react";
+import { React, useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import { GlobalStoreContext } from '../store'
 /*
     This React component represents a single item in our
@@ -9,6 +10,11 @@ import { GlobalStoreContext } from '../store'
 function Top5Item(props) {
     const { store } = useContext(GlobalStoreContext);
     const [draggedTo, setDraggedTo] = useState(0);
+    const [itemEditActive, setItemEditActive] = useState(false);
+    const [ text, setText ] = useState("");
+    store.history=useHistory();
+
+    //let {id, key, text, index} = props
 
     function handleDragStart(event) {
         event.dataTransfer.setData("item", event.target.id);
@@ -41,12 +47,55 @@ function Top5Item(props) {
         store.addMoveItemTransaction(sourceId, targetId);
     }
 
+    function handleToggleEdit(event) {
+        event.stopPropagation();
+        console.log("EDIT TOGGLED")
+        toggleEdit();
+    }
+
+    function toggleEdit() {
+        let newActive = !itemEditActive;
+        if (newActive) {
+            store.setIsItemEditActive();
+        }
+        setItemEditActive(newActive);
+    }
+
+    function handleKeyPress(event) {
+        if (event.code === "Enter") {
+            handleBlur();
+        }
+    }
+
     let { index } = props;
+
+    function handleBlur(event) {
+        console.log("onBlur", store.currentList._id, props.index, ":",text,":")
+        store.changeItem(store.currentList._id, props.index, text)
+        toggleEdit();
+        setText("")
+
+    }
+
+    function handleUpdateText(event) {
+        setText(event.target.value);
+    }
+
+    //console.log("item STORE",store.isItemEditActive)
+    //console.log("item STATE",itemEditActive)
+
     let itemClass = "top5-item";
     if (draggedTo) {
         itemClass = "top5-item-dragged-to";
     }
-    return (
+    let itemStatus = false;
+    if (store.isItemEditActive) {
+        itemStatus = true;
+    }
+    if (itemEditActive) {
+        console.log("edit active for this prop", props)
+    }
+    let itemElement = 
         <div
             id={'item-' + (index + 1)}
             className={itemClass}
@@ -61,10 +110,26 @@ function Top5Item(props) {
                 type="button"
                 id={"edit-item-" + index + 1}
                 className="list-card-button"
+                onClick={handleToggleEdit}
                 value={"\u270E"}
             />
             {props.text}
-        </div>)
+        </div>;
+    if (itemEditActive) {
+        itemElement =
+        <input
+            id={'item-' + (index + 1)}
+            className={itemClass}
+            type='text'
+            autoFocus={true}
+            onKeyPress={handleKeyPress}
+            onBlur={handleBlur}
+            onChange={handleUpdateText}
+            defaultValue={props.text}
+
+        />
+    }
+    return (itemElement);
 }
 
 export default Top5Item;

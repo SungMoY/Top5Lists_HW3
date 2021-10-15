@@ -12,6 +12,9 @@ function Workspace() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
+    //console.log("IN WORKSPACE", store.currentList.items)
+
+
     let editItems = "";
     if (store.currentList) {
         editItems = 

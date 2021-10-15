@@ -16,7 +16,7 @@ const ListSelector = () => {
         store.loadIdNamePairs();
     }, []);
 
-    console.log("store", store)
+    //console.log("store", store)
 
     function handleCreateNewList() {
         store.createNewList();

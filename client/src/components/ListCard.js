@@ -50,6 +50,8 @@ function ListCard(props) {
     function handleUpdateText(event) {
         setText(event.target.value);
     }
+    //console.log("listcard STORE",store.isListNameEditActive)
+    //console.log("listcard STATE",editActive)
 
     let selectClass = "unselected-list-card";
     if (selected) {
