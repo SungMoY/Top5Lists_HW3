@@ -83,7 +83,7 @@ function Top5Item(props) {
                 store.addUpdateItemTransaction(props.index, text, oldText);
             }
         } else {
-            console.log("NEW TEXT IS NOT UNIQUE ")
+            console.log("NEW TEXT IS NOT UNIQUE SO NO TRANSACTION ADDED/DONE")
         }
         toggleEdit();
     }

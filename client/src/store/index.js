@@ -35,7 +35,10 @@ export const useGlobalStore = () => {
         newListCounter: 0,
         isListNameEditActive: false,
         isItemEditActive: false,
-        listMarkedForDeletion: null
+        listMarkedForDeletion: null,
+        canUndo: false,
+        canRedo: false,
+        canCloseList: false
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -51,7 +54,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    canUndo: false,
+                    canRedo: false,
+                    canCloseList: false
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -62,7 +68,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    canUndo: false,
+                    canRedo: false,
+                    canCloseList: false
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -73,18 +82,24 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    canUndo: false,
+                    canRedo: false,
+                    canCloseList: false
                 });
             }
             // UPDATE A LIST           OPENS A LIST
             case GlobalStoreActionType.SET_CURRENT_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: payload.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    canUndo: payload.undoBool,
+                    canRedo: payload.redoBool,
+                    canCloseList: payload.closeListBool
                 });
             }
             // START EDITING A LIST NAME
@@ -95,7 +110,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: true,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    canUndo: false,
+                    canRedo: false,
+                    canCloseList: false
                 });
             }
             // START EDITING AN ITEM
@@ -107,6 +125,9 @@ export const useGlobalStore = () => {
                     isListNameEditActive: false,
                     isItemEditActive: true,
                     listMarkedForDeletion: null,
+                    canUndo: false,
+                    canRedo: false,
+                    canCloseList: false
                 });
             }
             default:
@@ -221,7 +242,12 @@ export const useGlobalStore = () => {
                 if (response.data.success) {
                     storeReducer({
                         type: GlobalStoreActionType.SET_CURRENT_LIST,
-                        payload: top5List
+                        payload: {
+                            currentList: top5List,
+                            undoBool: tps.hasTransactionToUndo(),
+                            redoBool: tps.hasTransactionToRedo(),
+                            closeListBool: true
+                        }
                     });
                     store.history.push("/top5list/" + top5List._id);
                 }
@@ -235,25 +261,9 @@ export const useGlobalStore = () => {
     }
 
     store.editItem = function (index, newText) {
-        console.log("index, text", index, newText)
-        async function asyncChangeItem(currentListId) {
-            let response = await api.getTop5ListById(currentListId);
-            console.log("DID IT GET THE CURRENTLIST", response.data.success)
-            if (response.data.success) {
-                let top5List = response.data.top5List;
-                top5List.items[index] = newText
-                async function updateList(top5List) {
-                    response = await api.updateTop5ListById(currentListId, top5List);
-                    console.log("DID IT UPDATE THE DATABASE", response.data.success)
-                    if (response.data.success) {
-                        console.log("AFTER CHANGE, LIST LOOKS LIKE", top5List)
-                        store.setCurrentList(currentListId)
-                    }
-                }
-                updateList(top5List);
-            }
-        }
-        asyncChangeItem(store.currentList._id);
+        console.log("index, text", index, newText, store.currentList)
+        store.currentList.items[index] = newText
+        store.updateCurrentList();
     }
 
     store.addMoveItemTransaction = function (start, end) {
@@ -283,11 +293,17 @@ export const useGlobalStore = () => {
     }
     store.updateCurrentList = function() {
         async function asyncUpdateCurrentList() {
+            console.log("EVERYTHING CALLS UPDATECURRENTLIST")
             const response = await api.updateTop5ListById(store.currentList._id, store.currentList);
             if (response.data.success) {
                 storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_LIST,
-                    payload: store.currentList
+                    payload: {
+                        currentList: store.currentList,
+                        undoBool: tps.hasTransactionToUndo(),
+                        redoBool: tps.hasTransactionToRedo(),
+                        closeListBool: true
+                    }
                 });
             }
         }

@@ -26,6 +26,9 @@ function EditToolbar() {
     if (store.isListNameEditActive) {
         editStatus = true;
     }
+
+    console.log("button bools", store.canUndo, store.canRedo, store.canCloseList)
+
     return (
         <div id="edit-toolbar">
             <div
