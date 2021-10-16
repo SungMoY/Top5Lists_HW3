@@ -41,8 +41,6 @@ export const useGlobalStore = () => {
         canCloseList: false
     });
 
-    
-
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
@@ -207,10 +205,10 @@ export const useGlobalStore = () => {
                 "name": "Untitled"+store.newListCounter++,
                 "items": ["?","?","?","?","?"]
             }
-            console.log("empty list created")
+            //console.log("empty list created")
             const response = await api.createTop5List(emptyList);
             if (response.data.success) {
-                console.log("empty list successfully sent to api and db", response.data.top5List._id)
+                //console.log("empty list successfully sent to api and db", response.data.top5List._id)
                 /*
                 storeReducer({
                     type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
@@ -248,7 +246,7 @@ export const useGlobalStore = () => {
     // FUNCTIONS ARE setCurrentList, addMoveItemTransaction, addUpdateItemTransaction,
     // moveItem, updateItem, updateCurrentList, undo, and redo
     store.setCurrentList = function (id) {
-        console.log("TPS CURRENTLY", tps)
+        //console.log("TPS CURRENTLY", tps)
         async function asyncSetCurrentList(id) {
             let response = await api.getTop5ListById(id);
             if (response.data.success) {
@@ -277,7 +275,7 @@ export const useGlobalStore = () => {
     }
 
     store.editItem = function (index, newText) {
-        console.log("index, text", index, newText, store.currentList)
+        //console.log("index, text", index, newText, store.currentList)
         store.currentList.items[index] = newText
         store.updateCurrentList();
     }
@@ -309,7 +307,7 @@ export const useGlobalStore = () => {
     }
     store.updateCurrentList = function() {
         async function asyncUpdateCurrentList() {
-            console.log("EVERYTHING CALLS UPDATECURRENTLIST")
+            //console.log("EVERYTHING CALLS UPDATECURRENTLIST")
             const response = await api.updateTop5ListById(store.currentList._id, store.currentList);
             if (response.data.success) {
                 storeReducer({
@@ -342,7 +340,7 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A TOP5ITEM
     store.setIsItemEditActive = function () {
-        console.log("isItemEditActive will now be updated to:", !store.isItemEditActive)
+        //console.log("isItemEditActive will now be updated to:", !store.isItemEditActive)
         async function asyncsetIsItemEditActive() {
                 storeReducer({
                 type: GlobalStoreActionType.SET_ITEM_EDIT_ACTIVE,

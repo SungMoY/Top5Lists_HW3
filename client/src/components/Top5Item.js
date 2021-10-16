@@ -55,7 +55,7 @@ function Top5Item(props) {
     }
 
     function toggleEdit() {
-        console.log("EDIT TOGGLED")
+        //console.log("EDIT TOGGLED")
         let newActive = !itemEditActive;
         if (newActive) {
             setText(props.text)
@@ -73,19 +73,19 @@ function Top5Item(props) {
     let { index } = props;
 
     function handleBlur(event) {
-        console.log("EDITING FINISHED, PASSING THESE ON", props.index, text, props.text)
+        //console.log("EDITING FINISHED, PASSING THESE ON", props.index, text, props.text)
         let oldText = props.text
         if (text !== oldText) {
-            console.log("NEW TEXT IS UNIQUE SO SHOULD BE UPDATED")
+            //console.log("NEW TEXT IS UNIQUE SO SHOULD BE UPDATED")
             if (text === "") {
-                console.log("QUESTION MARK TRANSACTION")
+                //console.log("QUESTION MARK TRANSACTION")
                 store.addUpdateItemTransaction(props.index, "?", oldText);
             } else {
-                console.log("REGULAR TRANSACTION")
+                //console.log("REGULAR TRANSACTION")
                 store.addUpdateItemTransaction(props.index, text, oldText);
             }
         } else {
-            console.log("NEW TEXT IS NOT UNIQUE SO NO TRANSACTION ADDED/DONE")
+            //console.log("NEW TEXT IS NOT UNIQUE SO NO TRANSACTION ADDED/DONE")
             store.updateCurrentList();
         }
         setItemEditActive(false);

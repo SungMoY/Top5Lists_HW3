@@ -55,7 +55,7 @@ function ListCard(props) {
 
     function handleDeleteList(event) {
         event.stopPropagation()
-        console.log("HANDLING DELETE LIST", props.idNamePair)
+        //console.log("HANDLING DELETE LIST", props.idNamePair)
         store.markForDeletion(props.idNamePair)
     }
 
