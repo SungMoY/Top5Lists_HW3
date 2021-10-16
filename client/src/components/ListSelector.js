@@ -12,9 +12,10 @@ const ListSelector = () => {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
+    // DONT CHANGE THIS USEEFFECT() OR ELSE STUCK IN RERENDER LOOP  
     useEffect(() => {
         store.loadIdNamePairs();
-    }, ["MUST HAVE OR ELSE RERENDER LOOP OCCURS"]);
+    }, []);
 
     //console.log("store", store)
 

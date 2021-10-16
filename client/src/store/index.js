@@ -130,6 +130,20 @@ export const useGlobalStore = () => {
                     canCloseList: false //payload.closeListBool
                 });
             }
+            // MARK LIST FOR DELETION
+            case GlobalStoreActionType.MARK_LIST_DELETE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: null,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: payload,
+                    canUndo: false,
+                    canRedo: false,
+                    canCloseList: false
+                })
+            }
             default:
                 return store;
         }
@@ -341,6 +355,39 @@ export const useGlobalStore = () => {
         asyncsetIsItemEditActive();
     }
 
+    store.markForDeletion = function (idAndNamePair) {
+        async function asyncMarkForDeletion(idAndNamePairId) {
+            const response = await api.getTop5ListById(idAndNamePairId)
+            if (response.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.MARK_LIST_DELETE,
+                    payload: response.data.top5List
+                })
+            }
+            store.showDeleteListModal()
+        }
+        asyncMarkForDeletion(idAndNamePair._id)
+    }
+
+    store.showDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.add("is-visible");
+    }
+
+    store.deleteMarkedList = function () {
+        async function asyncDeleteMarkedList() {
+            const response = await api.deleteTop5ListById(store.listMarkedForDeletion._id)
+            if (response.data.success) {
+               store.hideDeleteListModal();
+               store.loadIdNamePairs();
+            }
+        }
+        asyncDeleteMarkedList()
+    }
+    store.hideDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
+    }
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }

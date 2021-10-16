@@ -102,15 +102,6 @@ function Top5Item(props) {
 
     //if store.isItemEditActive is set to true, then ALL buttons need to be disabled (including dragging)
 
-    console.log("itemEditActive checker", index, itemEditActive)
-    console.log("store.itemEditActive checker", index, store.isItemEditActive)
-    let editButtonClass = "list-card-button"
-    let editButtonOnClick = handleToggleEdit
-    if (store.isItemEditActive) {
-        editButtonClass = "list-card-button-disabled"
-        editButtonOnClick = null
-    }
-
     let itemElement = 
         <div
             id={'item-' + (index + 1)}
