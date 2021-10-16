@@ -136,8 +136,6 @@ function Top5Item(props) {
 
         />
     }
-
-
     if (store.isItemEditActive) {
         itemElement = 
         <div
@@ -148,7 +146,7 @@ function Top5Item(props) {
                 type="button"
                 disabled={true}
                 id={"edit-item-" + index + 1}
-                className="list-card-button"
+                className="list-card-button-disabled"
                 draggable="false"
                 value={"\u270E"}
             />

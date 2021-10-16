@@ -177,7 +177,6 @@ body {
 .list-card-button-disabled {
   float:right;
   font-size:18pt;
-  opacity: 0.25; 
   cursor: not-allowed;
 }
 

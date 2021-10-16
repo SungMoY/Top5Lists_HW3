@@ -41,6 +41,8 @@ export const useGlobalStore = () => {
         canCloseList: false
     });
 
+    
+
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
