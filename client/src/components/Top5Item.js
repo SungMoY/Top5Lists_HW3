@@ -1,4 +1,5 @@
-import { React, useContext, useEffect, useState } from "react";
+//import { React, useContext, useEffect, useState } from "react";
+import { React, useContext, useState } from "react";
 import { useHistory } from "react-router";
 import { GlobalStoreContext } from '../store'
 /*
@@ -49,11 +50,12 @@ function Top5Item(props) {
 
     function handleToggleEdit(event) {
         event.stopPropagation();
-        console.log("EDIT TOGGLED")
+        //console.log("EDIT TOGGLED")
         toggleEdit();
     }
 
     function toggleEdit() {
+        console.log("EDIT TOGGLED")
         let newActive = !itemEditActive;
         if (newActive) {
             setText(props.text)
@@ -84,30 +86,31 @@ function Top5Item(props) {
             }
         } else {
             console.log("NEW TEXT IS NOT UNIQUE SO NO TRANSACTION ADDED/DONE")
+            store.updateCurrentList();
         }
-        toggleEdit();
+        setItemEditActive(false);
     }
 
     function handleUpdateText(event) {
         setText(event.target.value);
     }
 
-    //console.log("item STORE",store.isItemEditActive)
-    //console.log("item STATE",itemEditActive)
-
     let itemClass = "top5-item";
     if (draggedTo) {
         itemClass = "top5-item-dragged-to";
     }
-    let itemStatus = false;
+
+    //if store.isItemEditActive is set to true, then ALL buttons need to be disabled (including dragging)
+
+    console.log("itemEditActive checker", index, itemEditActive)
+    console.log("store.itemEditActive checker", index, store.isItemEditActive)
+    let editButtonClass = "list-card-button"
+    let editButtonOnClick = handleToggleEdit
     if (store.isItemEditActive) {
-        itemStatus = true;
+        editButtonClass = "list-card-button-disabled"
+        editButtonOnClick = null
     }
-    /*
-    if (itemEditActive) {
-        console.log("edit active for this prop", props)
-    }
-    */
+
     let itemElement = 
         <div
             id={'item-' + (index + 1)}
@@ -142,6 +145,42 @@ function Top5Item(props) {
 
         />
     }
+
+
+    if (store.isItemEditActive) {
+        itemElement = 
+        <div
+            id={'item-' + (index + 1)}
+            className="top5-item"
+        >
+            <input
+                type="button"
+                disabled={true}
+                id={"edit-item-" + index + 1}
+                className="list-card-button"
+                draggable="false"
+                value={"\u270E"}
+            />
+            {props.text}
+        </div>;
+    if (itemEditActive) {
+        itemElement =
+        <input
+            id={'item-' + (index + 1)}
+            className={itemClass}
+            type='text'
+            autoFocus={true}
+            onKeyPress={handleKeyPress}
+            onBlur={handleBlur}
+            onChange={handleUpdateText}
+            draggable="false"
+            defaultValue={props.text}
+
+        />
+    }
+
+    }
+
     return (itemElement);
 }
 

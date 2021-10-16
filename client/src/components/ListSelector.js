@@ -14,7 +14,7 @@ const ListSelector = () => {
 
     useEffect(() => {
         store.loadIdNamePairs();
-    }, []);
+    }, ["MUST HAVE OR ELSE RERENDER LOOP OCCURS"]);
 
     //console.log("store", store)
 

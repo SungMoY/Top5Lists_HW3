@@ -11,7 +11,6 @@ function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
 
-    let enabledButtonClass = "top5-button";
     function handleUndo() {
         store.undo();
     }
@@ -19,41 +18,55 @@ function EditToolbar() {
         store.redo();
     }
     function handleClose() {
+        //console.log("CLOSE LIST BUTTON CLICKED")
         history.push("/");
         store.closeCurrentList();
     }
-    let editStatus = false;
-    if (store.isListNameEditActive) {
-        editStatus = true;
+
+    //console.log("button bools", store.canUndo, store.canRedo, store.canCloseList)
+
+    let canCloseListOnClick = null
+    let canCloseListButtonClass = "top5-button-disabled"
+    if (store.canCloseList) {
+        canCloseListOnClick = handleClose
+        canCloseListButtonClass = "top5-button"
     }
 
-    console.log("button bools", store.canUndo, store.canRedo, store.canCloseList)
+    let canUndoOnClick = null
+    let canUndoButtonClass = "top5-button-disabled"
+    if (store.canUndo) {
+        canUndoOnClick = handleUndo
+        canUndoButtonClass = "top5-button"
+    }
+
+    let canRedoOnClick = null
+    let canRedoButtonClass = "top5-button-disabled"
+    if (store.canRedo) {
+        canRedoOnClick = handleRedo
+        canRedoButtonClass = "top5-button"
+    }
 
     return (
         <div id="edit-toolbar">
             <div
-                disabled={editStatus}
                 id='undo-button'
-                onClick={handleUndo}
-                className={enabledButtonClass}>
+                onClick={canUndoOnClick}
+                className={canUndoButtonClass}>
                 &#x21B6;
             </div>
             <div
-                disabled={editStatus}
                 id='redo-button'
-                onClick={handleRedo}
-                className={enabledButtonClass}>
+                onClick={canRedoOnClick}
+                className={canRedoButtonClass}>
                 &#x21B7;
             </div>
             <div
-                disabled={editStatus}
                 id='close-button'
-                onClick={handleClose}
-                className={enabledButtonClass}>
+                onClick={canCloseListOnClick}
+                className={canCloseListButtonClass}>
                 &#x24E7;
             </div>
         </div>
     )
 }
-
 export default EditToolbar;

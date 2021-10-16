@@ -123,11 +123,11 @@ export const useGlobalStore = () => {
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
-                    isItemEditActive: true,
+                    isItemEditActive: payload.toggleEditActive,
                     listMarkedForDeletion: null,
-                    canUndo: false,
-                    canRedo: false,
-                    canCloseList: false
+                    canUndo: false, //payload.undoBool,
+                    canRedo: false, //payload.redoBool,
+                    canCloseList: false //payload.closeListBool
                 });
             }
             default:
@@ -326,13 +326,19 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A TOP5ITEM
     store.setIsItemEditActive = function () {
-        async function asdf() {
+        console.log("isItemEditActive will now be updated to:", !store.isItemEditActive)
+        async function asyncsetIsItemEditActive() {
                 storeReducer({
                 type: GlobalStoreActionType.SET_ITEM_EDIT_ACTIVE,
-                payload: null
+                payload: {
+                    toggleEditActive: !store.isItemEditActive,
+                    undoBool: tps.hasTransactionToUndo(),
+                    redoBool: tps.hasTransactionToRedo(),
+                    closeListBool: true
+                }
             });
         }
-        asdf();
+        asyncsetIsItemEditActive();
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
