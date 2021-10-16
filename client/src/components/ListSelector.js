@@ -33,14 +33,21 @@ const ListSelector = () => {
             />
         ))
     }
+    let addButtonStatus = false
+    let addButtonClassName = "top5-button"
+    if (store.isListNameEditActive) {
+        addButtonStatus = true
+        addButtonClassName = "top5-button-disabled"
+    }
     return (
         <div id="top5-list-selector">
             <div id="list-selector-heading">
                 <input
                     type="button"
                     id="add-list-button"
+                    disabled={addButtonStatus}
                     onClick={handleCreateNewList}
-                    className="top5-button"
+                    className={addButtonClassName}
                     value="+" />
                 Your Lists
             </div>

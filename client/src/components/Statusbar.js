@@ -12,7 +12,7 @@ function Statusbar() {
         text = store.currentList.name;
     return (
         <div id="top5-statusbar">
-            {text}
+            Top 5 {text}
         </div>
     );
 }
