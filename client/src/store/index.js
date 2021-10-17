@@ -226,6 +226,17 @@ export const useGlobalStore = () => {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
         async function asyncLoadIdNamePairs() {
+            try {
+                const response = await api.getTop5ListPairs();
+            } catch (error) {
+                // Error that occurs is because there are no pairs in the list (before or after deleting the last list)
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    payload: []
+                });
+                return
+            }
+            // No error means the final list wasn't deleted or that there are still lists exisitng
             const response = await api.getTop5ListPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
