@@ -227,7 +227,7 @@ export const useGlobalStore = () => {
     store.loadIdNamePairs = function () {
         async function asyncLoadIdNamePairs() {
             try {
-                const response = await api.getTop5ListPairs();
+                await api.getTop5ListPairs();
             } catch (error) {
                 // Error that occurs is because there are no pairs in the list (before or after deleting the last list)
                 storeReducer({

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Top5Item from './Top5Item.js'
 import { GlobalStoreContext } from '../store'
@@ -11,6 +11,14 @@ import { GlobalStoreContext } from '../store'
 function Workspace() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
+
+
+    let url = window.location.href;
+    let page = url.substring(url.lastIndexOf('/') + 1);
+
+    useEffect(() => {
+        store.setCurrentList(page);
+    }, []);
 
     //console.log("IN WORKSPACE", store.currentList.items)
 
